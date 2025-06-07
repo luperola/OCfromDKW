@@ -22,16 +22,24 @@ app.post("/upload", upload.single("pdf"), async (req, res) => {
   let currentItem = null;
 
   let bufferDesc = [];
+  const seenPositions = new Set();
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
     //console.log("Line:", line);
 
     // Inizio nuova posizione
-    const posMatch = line.match(/^(\\d{3,4})\\s+([A-Za-z].*)/);
+    // Rileva posizioni (multipli di 100 con 3 o 4 cifre)
+    const posMatch = line.match(/^([1-9]\d?00)(.*)/);
 
     //console.log("Post Match", posMatch);
     if (posMatch) {
+      const posNumber = posMatch[1];
+      if (seenPositions.has(posNumber)) {
+        continue; // ignora posizioni duplicate
+      }
+      seenPositions.add(posNumber);
+
       // Salva il precedente
       if (currentItem && currentItem.deliveryDate && currentItem.quantity) {
         currentItem.description = bufferDesc.join(" ").replace(/\s+/g, " ");
@@ -39,15 +47,18 @@ app.post("/upload", upload.single("pdf"), async (req, res) => {
       }
 
       currentItem = {
-        pos: posMatch[1],
-        description: posMatch[2],
+        //pos: posMatch[1],
+        //description: posMatch[2],
+        pos: posNumber,
+        description: posMatch[2].trim(),
         orderCode: "",
         quantity: "",
         unitPrice: "",
         total: "",
         deliveryDate: "",
       };
-      bufferDesc = [posMatch[2]];
+      //bufferDesc = [posMatch[2]];
+      bufferDesc = [posMatch[2].trim()];
       continue;
     }
 
