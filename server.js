@@ -27,8 +27,6 @@ app.post("/upload", upload.single("pdf"), async (req, res) => {
     const line = lines[i];
 
     // Inizio nuova posizione
-    //const posMatch = line.match(/^(\d{3,4})\s+(.*)/);
-    // Inizio nuova posizione
     const posMatch = line.match(/^(\\d{3,4})\\s+([A-Za-z].*)/);
 
     //console.log("Post Match", posMatch);
