@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>PDF to Excel</title>
+  <style>
+    body { font-family: sans-serif; padding: 2em; max-width: 600px; margin: auto; }
+    input, button { margin: 1em 0; display: block; }
+  </style>
+</head>
+<body>
+  <h1>Convert PDF to Excel</h1>
+  <input type="file" id="fileInput" accept="application/pdf" />
+  <button onclick="upload()">Upload PDF</button>
+  <p id="status"></p>
+  <a id="downloadLink" style="display:none" href="/output.xlsx" download>Download Excel</a>
+  <script>
+    function upload() {
+      const fileInput = document.getElementById('fileInput');
+      const file = fileInput.files[0];
+      const status = document.getElementById('status');
+      const downloadLink = document.getElementById('downloadLink');
+      if (!file) {
+        status.textContent = "Please select a PDF file.";
+        return;
+      }
+      const formData = new FormData();
+      formData.append("pdf", file);
+      status.textContent = "Uploading and processing...";
+      fetch('/upload', {
+        method: 'POST',
+        body: formData
+      }).then(res => {
+        if (res.ok) {
+          status.textContent = "Success! Download your Excel file:";
+          downloadLink.style.display = "inline";
+        } else {
+          status.textContent = "Error during processing.";
+        }
+      }).catch(() => {
+        status.textContent = "Network error.";
+      });
+    }
+  </script>
+</body>
+</html>
