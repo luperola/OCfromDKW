@@ -20,7 +20,6 @@ app.post("/upload", upload.single("pdf"), async (req, res) => {
     .filter((l) => l !== "");
   const items = [];
   let currentItem = null;
-  C;
   let bufferDesc = [];
 
   for (let i = 0; i < lines.length; i++) {
@@ -29,7 +28,7 @@ app.post("/upload", upload.single("pdf"), async (req, res) => {
     // Inizio nuova posizione
     //const posMatch = line.match(/^(\d{3,4})\s+(.*)/);
     // Inizio nuova posizione
-    const posMatch = line.match(/^(\\d{3,4})\\s+([A-Za-z].*)/);
+    const posMatch = line.match(/^(\d{3,4})\s+([A-Za-z].*)/);
 
     //console.log("Post Match", posMatch);
     if (posMatch) {
