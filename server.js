@@ -20,7 +20,7 @@ app.post("/upload", upload.single("pdf"), async (req, res) => {
     .filter((l) => l !== "");
   const items = [];
   let currentItem = null;
-  C;
+
   let bufferDesc = [];
 
   for (let i = 0; i < lines.length; i++) {
