@@ -26,11 +26,15 @@ app.post("/upload", upload.single("pdf"), async (req, res) => {
   const allowed = /^(T-PIECE|TUBE|ELBOW|REDUCER|COAX)/;
 
   for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    //console.log("Line:", line);
+    let line = lines[i];
+
+    // Gestisce il caso in cui il numero di posizione sia su una
+    // riga separata dalla descrizione (es. "1600" a capo)
+    if (/^\d{3,4}$/.test(line) && i + 1 < lines.length) {
+      line = line + " " + lines[++i];
+    }
 
     // Inizio nuova posizione
-    // Rileva posizioni (multipli di 100 con 3 o 4 cifre)
     // Rileva posizioni (multipli di 100 con 3 o 4 cifre)
     const posMatch = line.match(/^([1-9]\d?00)(.*)/);
 
