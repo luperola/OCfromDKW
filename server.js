@@ -114,7 +114,17 @@ app.post("/upload", upload.single("pdf"), async (req, res) => {
     items.push(currentItem);
   }
 
-  res.json(items);
+  // Rimuove eventuali duplicati mantenendo la prima occorrenza
+  const uniqueItems = [];
+  const seenPos = new Set();
+  for (const item of items) {
+    if (!seenPos.has(item.pos)) {
+      uniqueItems.push(item);
+      seenPos.add(item.pos);
+    }
+  }
+
+  res.json(uniqueItems);
 });
 
 app.listen(3000, () => {
