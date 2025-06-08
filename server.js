@@ -23,6 +23,7 @@ app.post("/upload", upload.single("pdf"), async (req, res) => {
 
   let bufferDesc = [];
   const seenPositions = new Set();
+  const allowed = /^(T-PIECE|TUBE|ELBOW|REDUCER|COAX)/;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
@@ -30,13 +31,15 @@ app.post("/upload", upload.single("pdf"), async (req, res) => {
 
     // Inizio nuova posizione
     // Rileva posizioni (multipli di 100 con 3 o 4 cifre)
-    //const posMatch = line.match(/^([1-9]\d?00)(.*)/);
-    const posMatch = line.match(
-      /^(\d{3,4})(?=\s*(?:T-PIECE|TUBE|ELBOW|REDUCER|COAX))/
-    );
+    // Rileva posizioni (multipli di 100 con 3 o 4 cifre)
+    const posMatch = line.match(/^([1-9]\d?00)(.*)/);
 
     //console.log("Post Match", posMatch);
     if (posMatch) {
+      const restOfLine = posMatch[2] ? posMatch[2].trim() : "";
+      if (!allowed.test(restOfLine)) {
+        continue; // non è una posizione valida
+      }
       const posNumber = posMatch[1];
       if (seenPositions.has(posNumber)) {
         continue; // ignora posizioni duplicate
@@ -50,18 +53,15 @@ app.post("/upload", upload.single("pdf"), async (req, res) => {
       }
 
       currentItem = {
-        //pos: posMatch[1],
-        //description: posMatch[2],
         pos: posNumber,
-        description: posMatch[2].trim(),
+        description: restOfLine,
         orderCode: "",
         quantity: "",
         unitPrice: "",
         total: "",
         deliveryDate: "",
       };
-      //bufferDesc = [posMatch[2]];
-      bufferDesc = [posMatch[2].trim()];
+      bufferDesc = [restOfLine];
       continue;
     }
 
