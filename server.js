@@ -30,7 +30,10 @@ app.post("/upload", upload.single("pdf"), async (req, res) => {
 
     // Inizio nuova posizione
     // Rileva posizioni (multipli di 100 con 3 o 4 cifre)
-    const posMatch = line.match(/^([1-9]\d?00)(.*)/);
+    //const posMatch = line.match(/^([1-9]\d?00)(.*)/);
+    const posMatch = line.match(
+      /^(\d{3,4})(?=\s*(?:T-PIECE|TUBE|ELBOW|REDUCER|COAX))/
+    );
 
     //console.log("Post Match", posMatch);
     if (posMatch) {
